@@ -20,8 +20,7 @@ def capitaled(query: str):
     for word_ in query_split:
         word_cap = word_.capitalize()
         cap_text.append(word_cap)
-    cap_query = " ".join(cap_text)
-    return cap_query
+    return " ".join(cap_text)
 
 
 # to report for spam or pornographic content
@@ -86,10 +85,7 @@ def time_date_diff(year: int, month: int, date: int, hour: int, minute: int, dif
                 elif month == (11 or 9 or 6 or 4):
                     date = 30
                 else:
-                    if year % 4 == 0:
-                        date = 29
-                    else:
-                        date = 28
+                    date = 29 if year % 4 == 0 else 28
         else:
             minute += min_diff
             if minute >= 60:
@@ -105,7 +101,7 @@ def time_date_diff(year: int, month: int, date: int, hour: int, minute: int, dif
                 hour -= 24
                 date += 1
                 ts = "AM"
-            if date > 30 and (month == 4 or month == 6 or month == 9 or month == 11):
+            if date > 30 and month in {4, 6, 9, 11}:
                 month += 1
                 date -= 30
             elif date > 28 and month == 2 and year % 4 != 0:
@@ -114,15 +110,7 @@ def time_date_diff(year: int, month: int, date: int, hour: int, minute: int, dif
             elif date > 29 and month == 2 and year % 4 == 0:
                 month += 1
                 date -= 29
-            elif date > 31 and (
-                month == 1
-                or month == 3
-                or month == 5
-                or month == 7
-                or month == 8
-                or month == 10
-                or month == 12
-            ):
+            elif date > 31 and month in {1, 3, 5, 7, 8, 10, 12}:
                 month += 1
                 date -= 31
                 if month > 12:
@@ -132,7 +120,7 @@ def time_date_diff(year: int, month: int, date: int, hour: int, minute: int, dif
         minute = f"{minute:02}"
         date = f"{date:02}"
         month = f"{month:02}"
-        json_ = {
+        return {
             "hour": hour,
             "min": minute,
             "stamp": ts,
@@ -140,17 +128,15 @@ def time_date_diff(year: int, month: int, date: int, hour: int, minute: int, dif
             "month": month,
             "year": year,
         }
-        return json_
     except Exception as e:
         return e
 
     
 async def admin_or_creator(chat_id: int, user_id: int) -> dict:
     check_status = await paimon.get_chat_member(chat_id, user_id)
-    admin_ = True if check_status.status == "administrator" else False
-    creator_ = True if check_status.status == "creator" else False
-    json_ = {"is_admin": admin_, "is_creator": creator_}
-    return json_
+    admin_ = check_status.status == "administrator"
+    creator_ = check_status.status == "creator"
+    return {"is_admin": admin_, "is_creator": creator_}
 
 
 async def admin_chats(user_id: int) -> dict:
@@ -159,7 +145,6 @@ async def admin_chats(user_id: int) -> dict:
         user_ = await paimon.get_users(user_id)
     except:
         raise
-        return
     async for dialog in paimon.iter_dialogs():
         if dialog.chat.type in ["group", "supergroup", "channel"]:
             try:
@@ -196,17 +181,14 @@ async def get_response(msg, filter_user: Union[int, str] = 0, timeout: int = 5, 
             response = await paimon.get_messages(msg.chat.id, msg_id)
         except:
             raise "No response found."
-        if response.reply_to_message.message_id == msg.message_id:
-            if filter_user:
-                if response.from_user.id == user_.id:
-                    if mark_read:
-                        await paimon.send_read_acknowledge(msg.chat.id, response)
-                    return response
-            else:
-                if mark_read:
-                    await paimon.send_read_acknowledge(msg.chat.id, response)
-                return response
-        
+        if response.reply_to_message.message_id == msg.message_id and (
+            filter_user
+            and response.from_user.id == user_.id
+            or not filter_user
+        ):
+            if mark_read:
+                await paimon.send_read_acknowledge(msg.chat.id, response)
+            return response
     raise "No response found in time limit."
 
 
@@ -249,7 +231,6 @@ def extract_id(mention: str):
     elif mention.startswith("@"):
         return "Input is not a mention but a username..."
     men = mention.html
-    filter = re.search(r"\d+", men)
-    if filter: 
+    if filter := re.search(r"\d+", men):
         return filter.group(0)
     return "ID not found."

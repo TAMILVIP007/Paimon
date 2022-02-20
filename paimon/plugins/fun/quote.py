@@ -50,7 +50,7 @@ async def quotecmd(message: Message):
         quote_list.append(message.message_id)
     else:
         await message.delete()
-    if not args and len(quote_list) == 0:
+    if not args and not quote_list:
         await message.err(
             "Responda a uma mensagem ou fornecer um texto para quote !", del_in=5
         )

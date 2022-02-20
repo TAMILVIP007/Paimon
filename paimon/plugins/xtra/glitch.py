@@ -76,7 +76,7 @@ async def glitch_(message: Message):
     img = Image.open(glitch_file)
     message_id = replied.message_id
     if "-s" in message.flags:
-        glitched = Config.DOWN_PATH + "glitched.webp"
+        glitched = f'{Config.DOWN_PATH}glitched.webp'
         glitch_img = glitcher.glitch_image(img, args, color_offset=True)
         glitch_img.save(glitched)
         await message.client.send_sticker(

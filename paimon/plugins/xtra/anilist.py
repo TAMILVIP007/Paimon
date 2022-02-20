@@ -322,8 +322,7 @@ async def manga_arch(message: Message):
         return
     vars_ = {"search": query, "asHtml": True}
     result = await return_json_senpai(MANGA_QUERY, vars_)
-    error = result.get("errors")
-    if error:
+    if error := result.get("errors"):
         await CLOG.log(f"**ANILIST RETURNED FOLLOWING ERROR:**\n\n`{error}`")
         error_sts = error[0].get("message")
         await message.err(f"[{error_sts}]")
@@ -391,8 +390,7 @@ async def airing_anim(message: Message):
     if query.isdigit():
         vars_ = {"id": int(query), "asHtml": True}
     result = await return_json_senpai(ANIME_QUERY, vars_)
-    error = result.get("errors")
-    if error:
+    if error := result.get("errors"):
         await CLOG.log(f"**ANILIST RETURNED FOLLOWING ERROR:**\n\n`{error}`")
         error_sts = error[0].get("message")
         await message.err(f"[{error_sts}]")
@@ -449,8 +447,7 @@ async def get_schuled(message: Message):
     var = {"notYetAired": True}
     await message.edit("`Fetching Scheduled Animes`")
     result = await return_json_senpai(AIRING_QUERY, var)
-    error = result.get("errors")
-    if error:
+    if error := result.get("errors"):
         await CLOG.log(f"**ANILIST RETURNED FOLLOWING ERROR:**\n\n{error}")
         error_sts = error[0].get("message")
         await message.err(f"[{error_sts}]")
@@ -585,20 +582,17 @@ async def get_info(idm, req):
     result = await return_json_senpai(INFO_QUERY, vars_)
     data = result["data"]["Media"]
     if req == "desc":
-        synopsis = data.get("description")
-        return synopsis
-    else:
-        prqlsql = data.get("relations").get("edges")
-        ps = ""
-        for i in prqlsql:
-            ps += f'• {i["node"]["title"]["romaji"]} `{i["relationType"]}`\n'
-        return ps
+        return data.get("description")
+    prqlsql = data.get("relations").get("edges")
+    return "".join(
+        f'• {i["node"]["title"]["romaji"]} `{i["relationType"]}`\n'
+        for i in prqlsql
+    )
 
 
 async def get_ani(vars_):
     result = await return_json_senpai(ANIME_QUERY, vars_)
-    error = result.get("errors")
-    if error:
+    if error := result.get("errors"):
         await CLOG.log(f"**ANILIST RETURNED FOLLOWING ERROR:**\n\n`{error}`")
         error_sts = error[0].get("message")
         return [f"[{error_sts}]"]
@@ -655,12 +649,13 @@ async def get_ani(vars_):
             break
     additional = f"{prql}{sql}"
     dura = f"\n➤ **DURATION:** `{duration} min/ep`" if duration is not None else ""
-    charlist = []
-    for char in data["characters"]["nodes"]:
-        charlist.append(f"    •{char['name']['full']}")
+    charlist = [
+        f"    •{char['name']['full']}" for char in data["characters"]["nodes"]
+    ]
+
     chrctrs = "\n"
     chrctrs += ("\n").join(charlist[:10])
-    chrctrsls = f"\n➤ **CHARACTERS:** `{chrctrs}`" if len(charlist) != 0 else ""
+    chrctrsls = f"\n➤ **CHARACTERS:** `{chrctrs}`" if charlist else ""
     air_on = None
     if data["nextAiringEpisode"]:
         nextAir = data["nextAiringEpisode"]["airingAt"]
@@ -669,10 +664,7 @@ async def get_ani(vars_):
         ep_ = list(str(eps))
         x = ep_.pop()
         th = "th"
-        if len(ep_) >= 1:
-            if ep_.pop() != "1":
-                th = pos_no(x)
-        else:
+        if ep_ and ep_.pop() != "1" or not ep_:
             th = pos_no(x)
         air_on += f" | {eps}{th} eps"
     if air_on is None:
@@ -684,8 +676,7 @@ async def get_ani(vars_):
         trailer_link = f"[Trailer](https://youtu.be/{data['trailer']['id']})"
     html_char = ""
     for character in data["characters"]["nodes"]:
-        html_ = ""
-        html_ += ""
+        html_ = "" + ""
         html_ += f"""href="{character['siteUrl']}"""
         html_ += f"""<img src="{character['image']['large']}"/>"""
         html_ += ""
@@ -729,8 +720,7 @@ async def get_ani(vars_):
 
 async def get_char(var):
     result = await return_json_senpai(CHARACTER_QUERY, var)
-    error = result.get("errors")
-    if error:
+    if error := result.get("errors"):
         await CLOG.log(f"**ANILIST RETURNED FOLLOWING ERROR:**\n\n`{error}`")
         error_sts = error[0].get("message")
         return [f"[{error_sts}]"]
@@ -757,8 +747,8 @@ async def get_char(var):
         if kkkk == "ANIME":
             sninal += f"    • {kkk}\n"
     sninal += "\n"
-    sninm = "  `MANGAS`\n" if len(sninml) != 0 else ""
-    snina = "  `ANIMES`\n" if len(sninal) != 0 else ""
+    sninm = "  `MANGAS`\n" if sninml != '' else ""
+    snina = "  `ANIMES`\n" if sninal != '' else ""
     snin = f"\n{snina}{sninal}{sninm}{sninml}"
     sp = 0
     cntnt = ""
@@ -800,10 +790,7 @@ async def get_char(var):
 
 
 def pos_no(x):
-    th = "st" if x == "1" else "nd" if x == "2" else "rd" if x == "3" else "th"
-    return th
-
-    result["data"]["Media"]
+    return "st" if x == "1" else "nd" if x == "2" else "rd" if x == "3" else "th"
 
 
 def get_btns(result: list, lsqry):
@@ -818,30 +805,31 @@ def get_btns(result: list, lsqry):
                     )
                 ]
             )
+    elif result[3] != "None":
+        buttons.append(
+            [
+                InlineKeyboardButton(
+                    text="Prequel", callback_data=f"btn_{result[2]}{qry}"
+                ),
+                InlineKeyboardButton(
+                    text="Sequel", callback_data=f"btn_{result[3]}{qry}"
+                ),
+            ]
+        )
     else:
-        if result[3] != "None":
-            buttons.append(
-                [
-                    InlineKeyboardButton(
-                        text="Prequel", callback_data=f"btn_{result[2]}{qry}"
-                    ),
-                    InlineKeyboardButton(
-                        text="Sequel", callback_data=f"btn_{result[3]}{qry}"
-                    ),
-                ]
-            )
-        else:
-            buttons.append(
-                [
-                    InlineKeyboardButton(
-                        text="Prequel", callback_data=f"btn_{result[2]}{qry}"
-                    )
-                ]
-            )
-    btn = []
-    btn.append(
-        InlineKeyboardButton(text="Description", callback_data=f"desc_{result[6]}{qry}")
-    )
+        buttons.append(
+            [
+                InlineKeyboardButton(
+                    text="Prequel", callback_data=f"btn_{result[2]}{qry}"
+                )
+            ]
+        )
+    btn = [
+        InlineKeyboardButton(
+            text="Description", callback_data=f"desc_{result[6]}{qry}"
+        )
+    ]
+
     if result[4] is False:
         btn.append(
             InlineKeyboardButton(

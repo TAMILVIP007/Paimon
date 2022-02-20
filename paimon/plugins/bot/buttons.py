@@ -123,13 +123,10 @@ async def create_button(msg: Message):
 )
 async def inline_buttons(message: Message):
     await message.edit("<code>Creating an Inline Button...</code>")
-    reply = message.reply_to_message
-    msg_content = None
-    media_valid = False
     media_id = 0
-    if reply:
-        media_valid = bool(get_file_id(reply))
-
+    reply = message.reply_to_message
+    media_valid = bool(get_file_id(reply)) if reply else False
+    msg_content = None
     if message.input_str:
         msg_content = message.input_str
         if media_valid:

@@ -19,11 +19,8 @@ from paimon import Message, paimon
 async def create_poll(msg: Message):
     """ " Create poll"""
     options = ["👌 Yes, Perfect", "🙅‍♂️ no no please god no", "🤷🏻‍♂️ Maybe IDK"]
-    anonymous = True
-    if "-n" in msg.flags:
-        anonymous = False
-    replied = msg.reply_to_message
-    if replied:
+    anonymous = "-n" not in msg.flags
+    if replied := msg.reply_to_message:
         query = "Do you agree with that replied Suggestion..?"
         msg_id = replied.message_id
         await paimon.send_poll(

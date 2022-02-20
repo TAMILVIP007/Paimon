@@ -20,8 +20,7 @@ from paimon import Message, paimon
 )
 async def who_is(message: Message):
     await message.edit("`Coletando informações Whois .. Espere um pouco!`")
-    user_id = message.input_str
-    if user_id:
+    if user_id := message.input_str:
         try:
             from_user = await message.client.get_users(user_id)
             from_chat = await message.client.get_chat(user_id)
@@ -87,8 +86,6 @@ async def who_is(message: Message):
             os.remove(local_user_photo)
             await message.delete()
         else:
-            cuz = "Nenhum DP encontrado"
-            if not s_perm:
-                cuz = "Chat Send Media Forbidden"
-            message_out_str = "<b>📷 " + cuz + " 📷</b>\n\n" + message_out_str
+            cuz = "Chat Send Media Forbidden" if not s_perm else "Nenhum DP encontrado"
+            message_out_str = f'<b>📷 {cuz}' + " 📷</b>\n\n" + message_out_str
             await message.edit(message_out_str)

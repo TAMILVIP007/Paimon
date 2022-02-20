@@ -74,5 +74,5 @@ async def mentionadmins(message: Message):
 
         mentions += f"{owner_}\n{admins_}{bots_}"
     except Exception as e:
-        mentions += " " + str(e) + "\n"
+        mentions += f' {str(e)}' + "\n"
     await message.edit(mentions, disable_web_page_preview=True)

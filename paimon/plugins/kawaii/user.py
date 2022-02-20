@@ -27,7 +27,7 @@ BASE_PIC = "resources/base_profile_pic.jpg"
 MDFY_PIC = "resources/mdfy_profile_pic.jpg"
 LOG = paimon.getLogger(__name__)
 
-PHOTO = Config.DOWN_PATH + "profile_pic.jpg"
+PHOTO = f'{Config.DOWN_PATH}profile_pic.jpg'
 USER_DATA = {}
 
 
@@ -222,7 +222,7 @@ async def set_profile_picture(message: Message):
         await message.edit(f"`Profile picture set in {t_time} seconds.`")
 
     elif replied and replied.media and (replied.video or replied.animation):
-        VIDEO = Config.DOWN_PATH + "profile_vid.mp4"
+        VIDEO = f'{Config.DOWN_PATH}profile_vid.mp4'
         await paimon.download_media(
             message=replied,
             file_name=VIDEO,
@@ -304,7 +304,7 @@ async def view_profile(message: Message):
                 "<code>{}</code>".format(user.first_name), parse_mode="html"
             )
         else:
-            full_name = user.first_name + " " + user.last_name
+            full_name = f'{user.first_name} {user.last_name}'
             await message.edit("<code>{}</code>".format(full_name), parse_mode="html")
     elif "-bio" in message.flags:
         if not bio:

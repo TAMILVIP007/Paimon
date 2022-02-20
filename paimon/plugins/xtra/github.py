@@ -18,10 +18,10 @@ from paimon import Message, paimon
     },
 )
 async def fetch_github_info(message: Message):
-    replied = message.reply_to_message
-    username = message.filtered_input_str
-    if replied:
+    if replied := message.reply_to_message:
         username = replied.text
+    else:
+        username = message.filtered_input_str
     if not username:
         await message.err("invalid input !")
         return

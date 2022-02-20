@@ -45,15 +45,13 @@ async def _init() -> None:
 @paimon.on_cmd("alive", about={"header": "Just For Fun"}, allow_channels=False)
 async def alive_inline(message: Message):
     try:
-        if message.client.is_bot:
+        if message.client.is_bot or not paimon.has_bot:
             await send_alive_message(message)
-        elif paimon.has_bot:
+        else:
             try:
                 await send_inline_alive(message)
             except BadRequest:
                 await send_alive_message(message)
-        else:
-            await send_alive_message(message)
     except Exception as e_all:
         await message.err(str(e_all), del_in=10, log=__name__)
 
@@ -216,16 +214,17 @@ class Bot_Alive:
         match = _ALIVE_REGEX.search(media_link.strip())
         if not match:
             return None, None
-        if match.group(1) == "i.imgur.com":
-            link = match.group(0)
-            link_type = "url_gif" if match.group(3) == "gif" else "url_image"
-        elif match.group(1) == "telegra.ph/file":
+        if (
+            match.group(1) == "i.imgur.com"
+            or match.group(1) != "i.imgur.com"
+            and match.group(1) == "telegra.ph/file"
+        ):
             link = match.group(0)
             link_type = "url_gif" if match.group(3) == "gif" else "url_image"
         else:
             link_type = "tg_media"
             if match.group(2) == "c":
-                chat_id = int("-100" + str(match.group(3)))
+                chat_id = int(f'-100{str(match.group(3))}')
                 message_id = match.group(4)
             else:
                 chat_id = match.group(2)
@@ -235,13 +234,7 @@ class Bot_Alive:
 
     @staticmethod
     def alive_info() -> str:
-        alive_info_ = f"""
-ㅤㅤㅤㅤㅤㅤㅤ
-  💕   hey, paimon is awake
-  🦋   how are you doing today
-ㅤㅤㅤㅤㅤㅤㅤ
-"""
-        return alive_info_
+        return '\x1fㅤㅤㅤㅤㅤㅤㅤ\x1f  💕   hey, paimon is awake\x1f  🦋   how are you doing today\x1fㅤㅤㅤㅤㅤㅤㅤ\x1f'
 
     @staticmethod
     def _get_mode() -> str:

@@ -18,14 +18,11 @@ translator = google_translator()
     },
 )
 async def romaji_(message: Message):
-    x = str(
+    if x := str(
         message.input_str
         or message.reply_to_message.text
         or message.reply_to_message.caption
-    )
-    if not x:
-        await message.err("No Input Found")
-    else:
+    ):
         y = x.split("\n")
         result = translator.translate(y, lang_src="ja", lang_tgt="en", pronounce=True)
         k = result[1]
@@ -35,3 +32,5 @@ async def romaji_(message: Message):
             )
             k = result[2]
         await message.reply(k.replace("', '", "\n").replace("['", "").replace("']", ""))
+    else:
+        await message.err("No Input Found")

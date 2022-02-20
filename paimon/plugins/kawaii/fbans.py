@@ -81,14 +81,13 @@ async def delfed_(message: Message):
                 return await message.err("Provide a valid chat ID...", del_in=7)
         out = f"Chat ID: {chat_id}\n"
         found = await FED_LIST.find_one({"chat_id": int(chat_id)})
-        if found:
-            msg_ = out + f"Successfully Removed Fed: **{found['fed_name']}**"
-            await message.edit(msg_, del_in=7)
-            await FED_LIST.delete_one(found)
-        else:
+        if not found:
             return await message.err(
                 out + "**Does't exist in your Fed List !**", del_in=7
             )
+        msg_ = out + f"Successfully Removed Fed: **{found['fed_name']}**"
+        await message.edit(msg_, del_in=7)
+        await FED_LIST.delete_one(found)
     await CHANNEL.log(msg_)
 
 
@@ -106,7 +105,7 @@ async def fban_(message: Message):
     """Bans a user from connected Feds."""
     message.flags
     fban_arg = ["❯", "❯❯", "❯❯❯", "❯❯❯ <b>FBanned {}</b>"]
-    PROOF_CHANNEL = FBAN_LOG_CHANNEL if FBAN_LOG_CHANNEL else Config.LOG_CHANNEL_ID
+    PROOF_CHANNEL = FBAN_LOG_CHANNEL or Config.LOG_CHANNEL_ID
     input = message.filtered_input_str
     await message.edit(fban_arg[0])
     if not message.reply_to_message:
@@ -194,10 +193,10 @@ async def fban_(message: Message):
         )
     await message.edit(fban_arg[2])
 
-    if len(failed) != 0:
+    if failed:
         status = f"Failed to fban in {len(failed)}/{total} feds.\n"
         for i in failed:
-            status += "• " + i + "\n"
+            status += f'• {i}' + "\n"
     else:
         status = f"Success! Fbanned in `{total}` feds."
     msg_ = (
@@ -256,7 +255,7 @@ async def fban_p(message: Message):
             user_and_message = link_.split("/")
             chat_id = user_and_message[-2]
             if chat_id.isdigit():
-                chat_id = "-100" + str(chat_id)
+                chat_id = f'-100{str(chat_id)}'
                 chat_id = int(chat_id)
             else:
                 chat_ = await paimon.get_chat(chat_id)
@@ -386,13 +385,13 @@ async def fban_p(message: Message):
         )
     await message.edit(fban_arg[2])
 
-    if len(failed) != 0:
+    if failed:
         status = f"Failed to fban in {len(failed)}/{total} feds.\n"
         for i in failed:
-            status += "• " + i + "\n"
+            status += f'• {i}' + "\n"
     else:
         status = f"<b>Success!</b> Fbanned in {total} feds."
-        if len(r_update) != 0:
+        if r_update:
             for i in r_update:
                 status += f"\n• {i}"
     msg_ = (
@@ -421,7 +420,7 @@ async def fban_m(message: Message):
         await message.edit("Reply to a list of users...", del_in=5)
         return
     fban_arg = ["❯", "❯❯", "❯❯❯", "❯❯❯ <b>FBan complete</b>"]
-    PROOF_CHANNEL = FBAN_LOG_CHANNEL if FBAN_LOG_CHANNEL else Config.LOG_CHANNEL_ID
+    PROOF_CHANNEL = FBAN_LOG_CHANNEL or Config.LOG_CHANNEL_ID
     input = message.reply_to_message.text.split()
     reason = message.input_str or "Not specified"
     user_n = 0
@@ -486,11 +485,8 @@ async def unfban_(message: Message):
     fban_arg = ["❯", "❯❯", "❯❯❯", "❯❯❯ <b>Un-FBanned {}</b>"]
     await message.edit(fban_arg[0])
     input = message.input_str
-    if message.reply_to_message:
-        reason = input
-    else:
-        reason = input[1:]
-    PROOF_CHANNEL = FBAN_LOG_CHANNEL if FBAN_LOG_CHANNEL else Config.LOG_CHANNEL_ID
+    reason = input if message.reply_to_message else input[1:]
+    PROOF_CHANNEL = FBAN_LOG_CHANNEL or Config.LOG_CHANNEL_ID
     error_msg = "Provide a User ID or reply to a User"
     if user is None:
         return await message.err(error_msg, del_in=7)
@@ -529,10 +525,10 @@ async def unfban_(message: Message):
         )
     await message.edit(fban_arg[2])
 
-    if len(failed) != 0:
+    if failed:
         status = f"Failed to un-fban in `{len(failed)}/{total}` feds.\n"
         for i in failed:
-            status += "• " + i + "\n"
+            status += f'• {i}' + "\n"
     else:
         status = f"Success! Un-Fbanned in `{total}` feds."
     msg_ = (
@@ -564,7 +560,7 @@ async def fban_lst_(message: Message):
         id_ = f"'<code>{chat_id}</code>' - " if "-id" in message.flags else ""
         out += f"• Fed: {id_}<b>{data['fed_name']}</b>\n"
     await message.edit_or_send_as_file(
-        f"**Connected federations: [{total}]**\n\n" + out
+        f'**Connected federations: [{total}]**\n\n{out}'
         if out
         else "**You haven't connected to any federations yet!**",
         caption="Connected Fed List",

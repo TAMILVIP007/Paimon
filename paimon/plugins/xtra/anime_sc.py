@@ -87,8 +87,7 @@ async def anime_Scene(message: Message):
     ddlc_char = ["yuri", "natsuki", "monika", "sayori"]
 
     replied = message.reply_to_message
-    args = message.filtered_input_str
-    if args:
+    if args := message.filtered_input_str:
         text = args
     elif replied:
         text = args or replied.text

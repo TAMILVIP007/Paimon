@@ -133,9 +133,7 @@ async def doc_upload(
         message.chat.id, f"`Uploading {str_path} as a doc ... {extra}`"
     )
     start_t = datetime.now()
-    thumb = None
-    if with_thumb:
-        thumb = await get_thumb(str_path)
+    thumb = await get_thumb(str_path) if with_thumb else None
     await message.client.send_chat_action(message.chat.id, "upload_document")
     try:
         msg = await message.client.send_document(

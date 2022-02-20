@@ -66,9 +66,9 @@ async def merge_(message: Message):
         await message.edit(f"detected extension is .{rege_x}")
     # custom name.
     if name_:
-        output_path = "paimon/xcache/merge/" + name_ + "." + rege_x
+        output_path = f'paimon/xcache/merge/{name_}.{rege_x}'
     else:
-        output_path = "paimon/xcache/merge/output." + rege_x
+        output_path = f'paimon/xcache/merge/output.{rege_x}'
     # ffmpeg.
     await message.edit("`🏃️🏃🏃 ffmpeg ...`")
     logs_ = await runcmd(

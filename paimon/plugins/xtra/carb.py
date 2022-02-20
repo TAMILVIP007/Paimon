@@ -51,8 +51,7 @@ async def carb(message: Message):
     # Setting Default Theme and Background Colour
     theme = "dracula"
     bg = "rgba(144, 19, 254, 100)"
-    replied = message.reply_to_message
-    if replied:
+    if replied := message.reply_to_message:
         text = replied.text
         args = message.input_str.split("|")
     else:

@@ -21,8 +21,7 @@ async def _init():
 async def ani_save_media_alive(message: Message):
     """Set Media DB"""
     query = message.input_str
-    replied = message.reply_to_message
-    if replied:
+    if replied := message.reply_to_message:
         file = await paimon.download_media(replied)
         iurl = upload_file(file)
         media = f"https://telegra.ph{iurl[0]}"
@@ -52,7 +51,6 @@ async def view_del_ani(message: Message):
         await message.err("Flag Required")
         return
     media = ""
-    msg = "ᴏɪ ᴍᴇsᴛʀᴇ, ᴋᴀɴɴᴀx ɪ'ᴛs ᴀʟɪᴠᴇ"
     async for link in SAVED.find():
         media += f"{link['link']}"
     if media:
@@ -62,6 +60,7 @@ async def view_del_ani(message: Message):
         if "-v" in message.flags:
             await message.edit(media)
         if "-a" in message.flags:
+            msg = "ᴏɪ ᴍᴇsᴛʀᴇ, ᴋᴀɴɴᴀx ɪ'ᴛs ᴀʟɪᴠᴇ"
             await message.client.send_animation(
                 chat_id=message.chat.id, animation=media, caption=msg
             )

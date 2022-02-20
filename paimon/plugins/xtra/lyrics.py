@@ -23,7 +23,7 @@ async def glyrics(message: Message):
         await message.edit("Bruh WTF?")
         return
     await message.edit(f"__Searching Lyrics For {song}__")
-    to_search = song + "genius lyrics"
+    to_search = f'{song}genius lyrics'
     gen_surl = list(search(to_search, num=1, stop=1))[0]
     gen_page = requests.get(gen_surl)
     scp = BeautifulSoup(gen_page.text, "html.parser")
@@ -35,12 +35,11 @@ async def glyrics(message: Message):
     lyrics = re.sub(r"[\(\[].*?[\)\]]", "", lyrics)
     lyrics = os.linesep.join((s for s in lyrics.splitlines() if s))
     title = scp.find("title").get_text().split("|")
-    writers_box = [
+    if writers_box := [
         writer
         for writer in scp.find_all("span", {"class": "metadata_unit-label"})
         if writer.text == "Written By"
-    ]
-    if writers_box:
+    ]:
         target_node = writers_box[0].find_next_sibling(
             "span", {"class": "metadata_unit-info"}
         )
@@ -48,8 +47,8 @@ async def glyrics(message: Message):
     else:
         writers = "UNKNOWN"
     lyr_format = ""
-    lyr_format += "**" + title[0] + "**\n"
-    lyr_format += "__" + lyrics + "__"
+    lyr_format += f'**{title[0]}' + "**\n"
+    lyr_format += f'__{lyrics}__'
     lyr_format += "\n\n**Written By: **" + "__" + writers + "__"
     lyr_format += "\n**Source: **" + "`" + title[1] + "`"
 

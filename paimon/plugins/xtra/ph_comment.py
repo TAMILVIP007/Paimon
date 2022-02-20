@@ -38,7 +38,7 @@ async def ph_comment(message: Message):
             comment = msg_text or replied.text
         else:
             if user.last_name:
-                name = user.first_name + " " + user.last_name
+                name = f'{user.first_name} {user.last_name}'
             else:
                 name = user.first_name
             comment = message.input_str or replied.text

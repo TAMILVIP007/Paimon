@@ -37,14 +37,11 @@ async def media_h(message: Message):
         'This process takes soo much F*ing Time 😂 so here\'s a quote 🙆‍♀️\n\n`"All you gotta do is chill out... Let go of control and chill out... Let it be, Trust."`\n- **Esther Hicks**'
     )
     x = PrettyTable()
-    media_dict = {}
-    # Generate json
-    for m in TYPES:
-        media_dict[m] = {}
-        media_dict[m]["file_size"] = 0
-        media_dict[m]["count"] = 0
-        media_dict[m]["max_size"] = 0
-        media_dict[m]["max_file_link"] = ""
+    media_dict = {
+        m: {'file_size': 0, 'count': 0, 'max_size': 0, 'max_file_link': ''}
+        for m in TYPES
+    }
+
     # Count
     msg_count = 0
     x.title = "File Summary:"

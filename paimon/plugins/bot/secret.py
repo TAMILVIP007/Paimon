@@ -70,9 +70,9 @@ if paimon.has_bot:
                 v_count = 0
             if v_count == 0:
                 view_data["views"] = [u_id]
+            elif u_id in views:
+                return
             else:
-                if u_id in views:
-                    return
                 view_data["views"] = views.append(u_id)
             buttons = InlineKeyboardMarkup(
                 [[InlineKeyboardButton("SHOW", callback_data=msg_b_data)]]

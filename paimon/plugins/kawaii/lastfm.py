@@ -65,7 +65,7 @@ async def last_fm_pic_(message: Message):
     get_scrob = int(get_track["userplaycount"]) + 1
     scrobbler_ = f"\n\n<b>🎵 {get_scrob} Scrobbles</b>"
     await message.edit(
-        f"<a href={image}>\u200c</a>" + rep + scrobbler_, parse_mode="html"
+        f'<a href={image}>\u200c</a>{rep}{scrobbler_}', parse_mode="html"
     )
 
 
@@ -249,7 +249,7 @@ USERNAME = Config.LASTFM_USERNAME
 )
 async def lastfm_compat_(message: Message):
     """Mostra compatibilidade musical"""
-    await message.edit(f"Processando...")
+    await message.edit('Processando...')
     msg = message.input_str
     if not msg:
         return await message.edit("Pls verifique `{tr}help compat`")

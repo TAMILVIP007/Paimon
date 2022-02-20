@@ -21,8 +21,7 @@ from paimon import Config, Message, paimon
 async def make_qr(message: Message):
     """Make Qr code"""
     replied = message.reply_to_message
-    input_ = message.input_str
-    if input_:
+    if input_ := message.input_str:
         text = input_
     elif replied:
         text = input_ or replied.text
@@ -74,9 +73,10 @@ async def get_qr(message: Message):
         "-X",
         "POST",
         "-F",
-        "f=@" + down_load + "",
+        f'f=@{down_load}',
         "https://zxing.org/w/decode",
     ]
+
     process = await asyncio.create_subprocess_exec(
         *cmd,
         stdout=asyncio.subprocess.PIPE,

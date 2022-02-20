@@ -19,7 +19,7 @@ def search_music(query):
 
 def search_video(query):
     search = SearchVideos(query, offset=1, mode="json", max_results=1)
-    print(str(search.result()))
+    print(search.result())
     return json.loads(search.result())["search_result"]
 
 
@@ -30,7 +30,7 @@ def get_link(result) -> str:
 def get_filename(result) -> str:
     title_ = str(result[0]["title"]).replace("/", "")
     title = title_.replace(" ", "_")
-    return title + ".mp3", title + ".mp4"
+    return f'{title}.mp3', f'{title}.mp4'
 
 
 def get_duration(result):
@@ -93,7 +93,7 @@ async def song(message: Message):
         down_song(link, filename)
     except Exception as e:
         await message.edit("`unable to download the música.`")
-        print(str(e))
+        print(e)
         time.sleep(2)
         await message.delete()
     else:
@@ -113,7 +113,7 @@ Views: __{result[0]['viewCount']["text"]}__
                 )
             except Exception as e:
                 await message.edit("`Unable to send the song.`")
-                print(str(e))
+                print(e)
                 time.sleep(2)
                 await message.delete()
             finally:
@@ -152,7 +152,7 @@ async def video(message: Message):
         await message.edit("`unable to download the video.`")
         time.sleep(2)
         await message.delete()
-        print(str(e))
+        print(e)
     else:
         caption = f"**Title ➠** __[{result[0]['title']}]({link})__\n**Channel ➠** __{result[0]['channel']}__"
         try:
@@ -162,7 +162,7 @@ async def video(message: Message):
             )
         except Exception as e:
             await message.reply("`Unable to upload the video.`")
-            print(str(e))
+            print(e)
             time.sleep(2)
             await message.delete()
         finally:
