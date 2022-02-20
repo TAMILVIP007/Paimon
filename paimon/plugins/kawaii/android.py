@@ -53,8 +53,7 @@ async def device_info(message: Message):
 async def device_recovery(message: Message):
     """Get Latest TWRP"""
     message.reply_to_message
-    args = message.filtered_input_str
-    if args:
+    if args := message.filtered_input_str:
         device = args
     else:
         await message.err("```Insira o codename do dispositivo !!```", del_in=3)
@@ -83,19 +82,21 @@ async def magisk_(message: Message):
     """magisk mais recente"""
     magisk_repo = "https://raw.githubusercontent.com/fnixdev/magisk-files/"
     magisk_dict = {
-        "⦁ 𝗦𝘁𝗮𝗯𝗹𝗲": magisk_repo + "master/stable.json",
-        "⦁ 𝗕𝗲𝘁𝗮": magisk_repo + "master/beta.json",
-        "⦁ 𝗖𝗮𝗻𝗮𝗿𝘆": magisk_repo + "master/canary.json",
+        "⦁ 𝗦𝘁𝗮𝗯𝗹𝗲": f'{magisk_repo}master/stable.json',
+        "⦁ 𝗕𝗲𝘁𝗮": f'{magisk_repo}master/beta.json',
+        "⦁ 𝗖𝗮𝗻𝗮𝗿𝘆": f'{magisk_repo}master/canary.json',
     }
+
     releases = "<code><i>Versão mais recente do magisk:</i></code>\n\n"
     for name, release_url in magisk_dict.items():
         data = get(release_url).json()
         if "canary" in release_url:
-            data["app"]["link"] = magisk_repo + "canary/" + data["app"]["link"]
-            data["magisk"]["link"] = magisk_repo + "canary/" + data["magisk"]["link"]
+            data["app"]["link"] = f'{magisk_repo}canary/' + data["app"]["link"]
+            data["magisk"]["link"] = f'{magisk_repo}canary/' + data["magisk"]["link"]
             data["uninstaller"]["link"] = (
-                magisk_repo + "canary/" + data["uninstaller"]["link"]
+                f'{magisk_repo}canary/' + data["uninstaller"]["link"]
             )
+
 
         releases += (
             f'{name}: [ZIP v{data["magisk"]["version"]}]({data["magisk"]["link"]}) | '

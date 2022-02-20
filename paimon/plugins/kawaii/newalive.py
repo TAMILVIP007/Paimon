@@ -32,8 +32,7 @@ async def _init():
 async def ani_save_media_alive(message: Message):
     """set media alive"""
     query = message.input_str
-    replied = message.reply_to_message
-    if replied:
+    if replied := message.reply_to_message:
         file = await paimon.download_media(replied)
         iurl = upload_file(file)
         media = f"https://telegra.ph{iurl[0]}"
@@ -64,15 +63,12 @@ async def save_msg_alive(message: Message):
         return await message.edit(
             "`Você precisa digitar ou responder a uma mensagem pra salva-la`", del_in=6
         )
-    if rep:
-        await SAVED.update_one(
-            {"_id": "ALIVE_MSG"}, {"$set": {"data": rep}}, upsert=True
-        )
-        await message.edit(
-            "`Mensagem para alive definida com sucesso!`", del_in=5, log=True
-        )
-    else:
-        await message.err("Invalid Syntax")
+    await SAVED.update_one(
+        {"_id": "ALIVE_MSG"}, {"$set": {"data": rep}}, upsert=True
+    )
+    await message.edit(
+        "`Mensagem para alive definida com sucesso!`", del_in=5, log=True
+    )
 
 
 @paimon.on_cmd(
@@ -87,10 +83,7 @@ async def view_del_ani(message: Message):
     _findamsg = await SAVED.find_one({"_id": "ALIVE_MSG"})
     if _findpma is None:
         return await message.err("`Alive Media não está definida.`", del_in=5)
-    if _findamsg is None:
-        mmsg = rand_array(FRASES)
-    else:
-        mmsg = _findamsg.get("data")
+    mmsg = rand_array(FRASES) if _findamsg is None else _findamsg.get("data")
     media = _findpma.get("link")
     msg = "hey there, paimon is here 💕💕"
     alive_msg = f"""

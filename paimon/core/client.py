@@ -67,10 +67,8 @@ class _Abstractpaimon(Methods, RawClient):
             _IMPORTED[-1] = importlib.reload(_IMPORTED[-1])
         plg = _IMPORTED[-1]
         self.manager.update_plugin(plg.__name__, plg.__doc__)
-        if hasattr(plg, '_init'):
-            # pylint: disable=protected-access
-            if asyncio.iscoroutinefunction(plg._init):
-                _INIT_TASKS.append(self.loop.create_task(plg._init()))
+        if hasattr(plg, '_init') and asyncio.iscoroutinefunction(plg._init):
+            _INIT_TASKS.append(self.loop.create_task(plg._init()))
         _LOG.debug(_LOG_STR, f"Imported {_IMPORTED[-1].__name__} Plugin Successfully")
 
     async def _load_plugins(self) -> None:

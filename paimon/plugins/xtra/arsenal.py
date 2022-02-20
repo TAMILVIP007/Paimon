@@ -41,9 +41,7 @@ async def banager(message: Message, chat_id: int, user_id: int, until_date: int)
 )
 async def snapper(message: Message):
     chat_id = message.chat.id
-    act = "Banning"
-    if "-k" in message.flags:
-        act = "Kicking"
+    act = "Kicking" if "-k" in message.flags else "Banning"
     await message.edit(
         f"⚠️ {act} all Members of the chat. [`Check application logs"
         f" for status`]\nUse `{Config.CMD_TRIGGER}cancel` as reply to "

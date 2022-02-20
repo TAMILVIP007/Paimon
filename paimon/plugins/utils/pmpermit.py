@@ -141,8 +141,7 @@ async def get_id(message: Message):
 async def ani_save_pm_media(message: Message):
     """set pm media"""
     query = message.input_str
-    replied = message.reply_to_message
-    if replied:
+    if replied := message.reply_to_message:
         file = await paimon.download_media(replied)
         iurl = upload_file(file)
         media = f"https://telegra.ph{iurl[0]}"
@@ -226,16 +225,14 @@ async def set_custom_nopm_message(message: Message):
         await message.edit("`Custom PM_Block msg resetada`", del_in=3, log=True)
         noPmMessage = bk_noPmMessage
         await SAVED_SETTINGS.find_one_and_delete({"_id": "CUSTOM NOPM MESSAGE"})
+    elif string := message.input_or_reply_raw:
+        await message.edit("`Custom PM_Block msg salva`", del_in=3, log=True)
+        noPmMessage = string
+        await SAVED_SETTINGS.update_one(
+            {"_id": "CUSTOM NOPM MESSAGE"}, {"$set": {"data": string}}, upsert=True
+        )
     else:
-        string = message.input_or_reply_raw
-        if string:
-            await message.edit("`Custom PM_Block msg salva`", del_in=3, log=True)
-            noPmMessage = string
-            await SAVED_SETTINGS.update_one(
-                {"_id": "CUSTOM NOPM MESSAGE"}, {"$set": {"data": string}}, upsert=True
-            )
-        else:
-            await message.err("invalid input!")
+        await message.err("invalid input!")
 
 
 @paimon.on_cmd(
@@ -262,18 +259,16 @@ async def set_custom_blockpm_message(message: Message):
         await message.edit("`Custom Block msg resetada`", del_in=3, log=True)
         blocked_message = bk_blocked_message
         await SAVED_SETTINGS.find_one_and_delete({"_id": "CUSTOM BLOCKPM MESSAGE"})
+    elif string := message.input_or_reply_raw:
+        await message.edit("Custom Block msg salva`", del_in=3, log=True)
+        blocked_message = string
+        await SAVED_SETTINGS.update_one(
+            {"_id": "CUSTOM BLOCKPM MESSAGE"},
+            {"$set": {"data": string}},
+            upsert=True,
+        )
     else:
-        string = message.input_or_reply_raw
-        if string:
-            await message.edit("Custom Block msg salva`", del_in=3, log=True)
-            blocked_message = string
-            await SAVED_SETTINGS.update_one(
-                {"_id": "CUSTOM BLOCKPM MESSAGE"},
-                {"$set": {"data": string}},
-                upsert=True,
-            )
-        else:
-            await message.err("invalid input!")
+        await message.err("invalid input!")
 
 
 @paimon.on_cmd(

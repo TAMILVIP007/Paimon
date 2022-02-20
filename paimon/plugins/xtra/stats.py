@@ -46,12 +46,12 @@ async def get_stats_(message: Message):
             unread_mentions += dialog.unread_mentions_count
             unread_msg += dialog.unread_messages_count
             chat_type = dialog.chat.type
-            if chat_type in ["bot", "private"]:
+            if chat_type == "bot":
                 private_chats += 1
-                if chat_type == "bot":
-                    bots += 1
-                else:
-                    users_ += 1
+                bots += 1
+            elif chat_type == "private":
+                private_chats += 1
+                users_ += 1
             else:
                 try:
                     is_admin = await admin_check(dialog.chat.id, owner.id)

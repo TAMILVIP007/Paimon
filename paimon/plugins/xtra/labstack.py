@@ -32,11 +32,9 @@ async def labstack(message: Message):
     if not os.path.isdir(Config.DOWN_PATH):
         os.mkdir(Config.DOWN_PATH)
 
-    path_ = message.filtered_input_str
     dl_loc = ""
-    if path_:
-        is_url = re.search(r"(?:https?|ftp)://[^|\s]+\.[^|\s]+", path_)
-        if is_url:
+    if path_ := message.filtered_input_str:
+        if is_url := re.search(r"(?:https?|ftp)://[^|\s]+\.[^|\s]+", path_):
             await message.edit("`Downloading From URL...`")
             if not os.path.isdir(Config.DOWN_PATH):
                 os.mkdir(Config.DOWN_PATH)
@@ -73,16 +71,12 @@ async def labstack(message: Message):
                     progress_str = progress_str.format(
                         "Downloading",
                         "".join(
-                            (
-                                Config.FINISHED_PROGRESS_STR
-                                for i in range(math.floor(percentage / 5))
-                            )
+                            Config.FINISHED_PROGRESS_STR
+                            for _ in range(math.floor(percentage / 5))
                         ),
                         "".join(
-                            (
-                                Config.UNFINISHED_PROGRESS_STR
-                                for i in range(20 - math.floor(percentage / 5))
-                            )
+                            Config.UNFINISHED_PROGRESS_STR
+                            for _ in range(20 - math.floor(percentage / 5))
                         ),
                         round(percentage, 2),
                         url,
@@ -92,6 +86,7 @@ async def labstack(message: Message):
                         speed,
                         estimated_total_time,
                     )
+
                     count += 1
                     if count >= 5:
                         count = 0

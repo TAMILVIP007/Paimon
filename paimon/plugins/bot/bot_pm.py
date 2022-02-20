@@ -63,7 +63,7 @@ if paimon.has_bot:
         async def func(_, __, m: Message) -> bool:
             text = m.text or m.caption
             bot_ = (await get_bot_info()).get("bot")
-            username = "@" + bot_.uname if bot_ else ""
+            username = f'@{bot_.uname}' if bot_ else ""
             pattern = comp_regex(f"(?i)^/start({username})?([\s]+)?$")
             m.matches = (list(pattern.finditer(text)) if text else None) or None
             return bool(
@@ -78,11 +78,10 @@ if paimon.has_bot:
             _BOT_PM_MEDIA = get_file_id(await paimon.bot.get_messages("kannagifs", 6))
             return
         if Config.BOT_MEDIA.strip().lower() != "false":
-            match = _TG_LINK_REGEX.search(Config.BOT_MEDIA)
-            if match:
+            if match := _TG_LINK_REGEX.search(Config.BOT_MEDIA):
                 from_chat = str(match.group(1))
                 if from_chat.isdigit():
-                    from_chat = int("-100" + from_chat)
+                    from_chat = int(f'-100{from_chat}')
                 msg_id = int(match.group(2))
                 try:
                     bot_m_fid = get_file_id(
@@ -164,7 +163,7 @@ if paimon.has_bot:
         return not bool(found)
 
     def default_owner_start(from_user):
-        start_msg = f"ᴏɪ ᴍᴇsᴛʀᴇ 🥰!\nᴄᴏᴍᴏ ᴘᴏssᴏ ʟʜᴇ sᴇʀ ᴜᴛɪʟ ʜᴏᴊᴇ?"
+        start_msg = 'ᴏɪ ᴍᴇsᴛʀᴇ 🥰!\nᴄᴏᴍᴏ ᴘᴏssᴏ ʟʜᴇ sᴇʀ ᴜᴛɪʟ ʜᴏᴊᴇ?'
         btns = [
             [
                 InlineKeyboardButton(

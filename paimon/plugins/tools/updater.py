@@ -59,12 +59,9 @@ async def check_update(message: Message):
     if "pull" in flags:
         pull_from_repo = True
         flags.remove("pull")
-    if "push" in flags:
-        if not Config.HEROKU_APP:
-            await message.err("HEROKU APP : could not be found !")
-            return
-        # push_to_heroku = True
-        # flags.remove("push")
+    if "push" in flags and not Config.HEROKU_APP:
+        await message.err("HEROKU APP : could not be found !")
+        return
     if "pr" in flags:
         branch = "master"
         out = _get_updates_pr(git_u_n, branch)
@@ -132,27 +129,23 @@ async def check_update(message: Message):
 def _get_updates(repo: Repo, branch: str) -> str:
     repo.remote(Config.UPSTREAM_REMOTE).fetch(branch)
     upst = Config.UPSTREAM_REPO.rstrip("/")
-    out = ""
     upst = Config.UPSTREAM_REPO.rstrip("/")
-    for i in repo.iter_commits(f"HEAD..{Config.UPSTREAM_REMOTE}/{branch}"):
-        out += (
-            f"🔨 **#{i.count()}** : [{i.summary}]({upst}/commit/{i})  __{i.author}__\n\n"
-        )
-    return out
+    return "".join(
+        f"🔨 **#{i.count()}** : [{i.summary}]({upst}/commit/{i})  __{i.author}__\n\n"
+        for i in repo.iter_commits(f"HEAD..{Config.UPSTREAM_REMOTE}/{branch}")
+    )
 
 
 def _get_updates_pr(git_u_n: str, branch: str) -> str:
-    pr_up = f"https://github.com/{git_u_n}/Paimon-Plugins"
     repo = Repo()
+    pr_up = f"https://github.com/{git_u_n}/Paimon-Plugins"
     repo.remote(pr_up).fetch(branch)
     upst = pr_up.rstrip("/")
-    out = ""
     upst = pr_up.rstrip("/")
-    for i in repo.iter_commits(f"HEAD..{pr_up}/{branch}"):
-        out += (
-            f" **#{i.count()}** : [{i.summary}]({upst}/commit/{i})  __{i.author}__\n\n"
-        )
-    return out
+    return "".join(
+        f" **#{i.count()}** : [{i.summary}]({upst}/commit/{i})  __{i.author}__\n\n"
+        for i in repo.iter_commits(f"HEAD..{pr_up}/{branch}")
+    )
 
 
 async def _pull_from_repo(repo: Repo, branch: str) -> None:

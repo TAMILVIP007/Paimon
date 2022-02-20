@@ -42,7 +42,7 @@ async def random_cat(message: Message):
         reply = message.reply_to_message
         reply_id = reply.message_id if reply else None
         r = await client.get("https://api.thecatapi.com/v1/images/search")
-    if not r.status_code == 200:
+    if r.status_code != 200:
         return await message.edit(f"<b>Error!</b> <code>{r.status_code}</code>")
     cat = r.json
     await message.delete()
@@ -63,7 +63,7 @@ async def random_dog(message: Message):
         reply = message.reply_to_message
         reply_id = reply.message_id if reply else None
         r = await client.get("https://api.thedogapi.com/v1/images/search")
-    if not r.status_code == 200:
+    if r.status_code != 200:
         return await message.edit(f"<b>Error!</b> <code>{r.status_code}</code>")
     dog = r.json
     await message.delete()

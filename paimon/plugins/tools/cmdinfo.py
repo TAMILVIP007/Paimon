@@ -61,9 +61,10 @@ async def see_info(message: Message):
     if branch == "master":
         branch = "master"
     plugin_name = paimon.manager.commands[cmd_str].plugin_name
-    plugin_loc = ("/" + paimon.manager.plugins[plugin_name].parent).replace(
+    plugin_loc = f'/{paimon.manager.plugins[plugin_name].parent}'.replace(
         "/plugins", ""
     )
+
     if plugin_loc == "/xtra":
         extra_plugins = (
             "https://github.com/thegreatfoxxgoddess/paimon-Plugins/blob/master/plugins/"
@@ -117,9 +118,12 @@ def count_lines(cmd_path: str, word: str = None):
     if word:
         word = word.strip().lower()
     with open(cmd_path, "r") as f:
-        for num_lines, line in enumerate(f, start=1):
-            if word and word in line.lower():
-                arr.append(num_lines)
+        arr.extend(
+            num_lines
+            for num_lines, line in enumerate(f, start=1)
+            if word and word in line.lower()
+        )
+
     return num_lines, arr
 
 

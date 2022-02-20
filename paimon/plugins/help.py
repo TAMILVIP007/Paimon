@@ -286,10 +286,7 @@ if paimon.has_bot:
                 "você está usando [BOT MODE], não pode mudar o cliente.",
                 show_alert=True,
             )
-        if Config.USE_USER_FOR_CLIENT_CHECKS:
-            Config.USE_USER_FOR_CLIENT_CHECKS = False
-        elif RawClient.DUAL_MODE:
-            Config.USE_USER_FOR_CLIENT_CHECKS = True
+        Config.USE_USER_FOR_CLIENT_CHECKS = not Config.USE_USER_FOR_CLIENT_CHECKS
         await SAVED_SETTINGS.update_one(
             {"_id": "CURRENT_CLIENT"},
             {"$set": {"is_user": Config.USE_USER_FOR_CLIENT_CHECKS}},
@@ -367,12 +364,15 @@ if paimon.has_bot:
                 )
             )
             if len(cur_pos.split("|")) > 2:
-                tmp_btns.append(InlineKeyboardButton("Main Menu", callback_data="mm"))
-                tmp_btns.append(
-                    InlineKeyboardButton(
-                        "Update", callback_data=f"refresh({cur_pos})".encode()
+                tmp_btns.extend(
+                    (
+                        InlineKeyboardButton("Main Menu", callback_data="mm"),
+                        InlineKeyboardButton(
+                            "Update", callback_data=f"refresh({cur_pos})".encode()
+                        ),
                     )
                 )
+
         else:
             cur_clnt = "USER" if Config.USE_USER_FOR_CLIENT_CHECKS else "BOT"
             tmp_btns.append(

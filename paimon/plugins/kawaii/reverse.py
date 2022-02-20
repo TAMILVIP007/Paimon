@@ -42,7 +42,7 @@ def GRS(path_to_file):
     ] = "en-US;q=0.8,en;q=0.7,pt-BR,pt;q=0.9,zh-TW;q=0.6,zh;q=0.5"
     resp = requests.get(url, headers=headers)
     regex = re.findall('value="(.*?)" aria-label="Pesquisar"', resp.text)
-    return fetchUrl, regex[0]
+    return url, regex[0]
 
 
 @paimon.on_cmd(

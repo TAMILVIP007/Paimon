@@ -32,7 +32,7 @@ async def freezer_(message: Message):
     except BaseException:
         plugin_name = message.input_str
     try:
-        help_ = True if plugin_name == "help" else False
+        help_ = plugin_name == "help"
         plugin_parent = paimon.manager.plugins[plugin_name].parent
         loc_ = (
             f"paimon/plugins/{plugin_parent}/{plugin_name}.py"

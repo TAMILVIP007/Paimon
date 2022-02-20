@@ -245,10 +245,11 @@ async def sayleft(msg: Message):
 
 async def raw_set(message: Message, name, collection, chats):
     replied = message.reply_to_message
-    string = message.input_or_reply_raw
-    if not (string or (replied and replied.media)):
-        out = f"**Wrong Syntax**\ncheck `.help .set{name.lower()}`"
-    else:
+    if (
+        (string := message.input_or_reply_raw)
+        or not (string := message.input_or_reply_raw)
+        and (replied and replied.media)
+    ):
         message_id = await CHANNEL.store(replied, string)
         await collection.update_one(
             {"_id": message.chat.id},
@@ -257,6 +258,8 @@ async def raw_set(message: Message, name, collection, chats):
         )
         chats.add(message.chat.id)
         out = f"{name} __message has been set for the__\n`{message.chat.title}`"
+    else:
+        out = f"**Wrong Syntax**\ncheck `.help .set{name.lower()}`"
     await message.edit(text=out, del_in=3)
 
 
@@ -304,11 +307,10 @@ async def raw_del(message: Message, name, collection, chats):
             chats.clear()
             await collection.drop()
             out = f"`All {name} Messages Removed Successfully!`"
-    else:
-        if await collection.find_one_and_delete({"_id": message.chat.id}):
-            if message.chat.id in chats:
-                chats.remove(message.chat.id)
-            out = f"`{name} Removed Successfully!`"
+    elif await collection.find_one_and_delete({"_id": message.chat.id}):
+        if message.chat.id in chats:
+            chats.remove(message.chat.id)
+        out = f"`{name} Removed Successfully!`"
     await message.edit(text=out, del_in=3)
 
 

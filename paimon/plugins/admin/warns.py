@@ -384,9 +384,7 @@ async def totalwarns(message: Message):
 
     count = 0
     found = await WARN_DATA.find_one({"chat_id": message.chat.id})
-    max_warns = 3
-    if found:
-        max_warns = found.get("max_warns", 3)
+    max_warns = found.get("max_warns", 3) if found else 3
     warns_ = ""
     async for warn in WARNS_DB.find(
         {"chat_id": message.chat.id, "user_id": warn_user.id}

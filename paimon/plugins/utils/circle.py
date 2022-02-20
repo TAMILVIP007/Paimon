@@ -24,7 +24,7 @@ LOG = paimon.getLogger(__name__)
 async def video_note(message: Message):
     """Covert to video note"""
     _cache_path = "paimon/xcache/circle"
-    _vid_path = _cache_path + "/temp_vid.mp4"
+    _vid_path = f'{_cache_path}/temp_vid.mp4'
     reply = message.reply_to_message
     if not reply:
         await message.err("Reply to supported media", del_in=10)
@@ -40,8 +40,8 @@ async def video_note(message: Message):
         note = safe_filename(await reply.download())
         await crop_vid(note, _vid_path)
     else:
-        thumb_loc = _cache_path + "/thumb.jpg"
-        audio_loc = _cache_path + "/music.mp3"
+        thumb_loc = f'{_cache_path}/thumb.jpg'
+        audio_loc = f'{_cache_path}/music.mp3'
         if reply.audio.thumbs:
             audio_thumb = reply.audio.thumbs[0].file_id
             thumb = await paimon.download_media(audio_thumb)
@@ -80,14 +80,24 @@ async def crop_vid(input_vid: str, final_path: str):
             vid_valid = True
             height_ = int(stream.get("Height", 0))
             width_ = int(stream.get("Width", 0))
-            aspect_ratio_ = stream.get("DisplayAspectRatio")
-            if aspect_ratio_:
-                if aspect_ratio_ == "1":
-                    correct_aspect = False
-            elif width_ and height_:
-                if width_ == height_ != 0:
-                    correct_aspect = False
-            else:
+            if (
+                (aspect_ratio_ := stream.get("DisplayAspectRatio"))
+                and aspect_ratio_ == "1"
+                or not (aspect_ratio_ := stream.get("DisplayAspectRatio"))
+                and width_
+                and height_
+                and width_ == height_ != 0
+            ):
+                correct_aspect = False
+            elif (
+                not (aspect_ratio_ := stream.get("DisplayAspectRatio"))
+                or aspect_ratio_ == "1"
+            ) and (
+                (aspect_ratio_ := stream.get("DisplayAspectRatio"))
+                or not width_
+                or not height_
+                or width_ == height_ != 0
+            ):
                 return
             break
     if vid_valid:

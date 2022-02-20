@@ -72,9 +72,6 @@ async def copy_channel_(message: Message):
             sticker="CAACAgIAAx0CW6USIQACCwVh62uAu8M5kiBQgKbj8R3s9xEtQQAC6AAD-H-lCtLIOj4Om6I7HgQ"
         )
         return
-        return await message.edit(
-            f"Need admin rights to copy posts to {to_.title}...", del_in=5
-        )
     total = 100
     list_ = []
     await message.edit(

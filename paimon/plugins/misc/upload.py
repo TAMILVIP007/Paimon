@@ -94,9 +94,10 @@ async def upload_to_tg(message: Message):
         path_ = input.replace("/", " ").split()[0]
         cmd_str = Config.CMD_TRIGGER + path_
         plugin_name = paimon.manager.commands[cmd_str].plugin_name
-        plugin_loc = ("/" + paimon.manager.plugins[plugin_name].parent).replace(
+        plugin_loc = f'/{paimon.manager.plugins[plugin_name].parent}'.replace(
             "/plugins", ""
         )
+
         path_ = f"paimon/plugins{plugin_loc}/{plugin_name}.py"
     except BaseException:
         path_ = input
@@ -230,9 +231,7 @@ async def doc_upload(
         message.chat.id, f"`Uploading {str_path} as a doc ... {extra}`"
     )
     start_t = datetime.now()
-    thumb = None
-    if with_thumb:
-        thumb = await get_thumb(str_path)
+    thumb = await get_thumb(str_path) if with_thumb else None
     await message.client.send_chat_action(message.chat.id, "upload_document")
     try:
         msg = await message.client.send_document(

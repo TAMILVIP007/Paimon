@@ -99,8 +99,6 @@ async def add_sudo(message: Message):
             if user["id"] in Config.SUDO_USERS:
                 Config.SUDO_USERS.remove(user["id"])
                 await SUDO_USERS_COLLECTION.delete_one({"_id": user["id"]})
-            else:
-                pass
             Config.TRUSTED_SUDO_USERS.add(user["id"])
             await asyncio.gather(
                 TRUSTED_SUDO_USERS.insert_one(
@@ -128,8 +126,6 @@ async def add_sudo(message: Message):
         if user["id"] in Config.TRUSTED_SUDO_USERS:
             Config.TRUSTED_SUDO_USERS.remove(user["id"])
             await TRUSTED_SUDO_USERS.delete_one({"_id": user["id"]})
-        else:
-            pass
         Config.SUDO_USERS.add(user["id"])
         await asyncio.gather(
             SUDO_USERS_COLLECTION.insert_one(
@@ -258,7 +254,7 @@ async def add_sudo_cmd(message: Message):
             t_c = c_d.lstrip(Config.CMD_TRIGGER)
             if "-all" in message.flags:
                 mode_ = "all"
-                if not (t_c in blocked_cmd):
+                if t_c not in blocked_cmd:
                     tmp_.append({"_id": t_c})
                     Config.ALLOWED_COMMANDS.add(t_c)
         await asyncio.gather(

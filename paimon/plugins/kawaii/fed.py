@@ -66,9 +66,8 @@ async def f_stat(message: Message):
 )
 async def fban_stat(message: Message):
     """check fban details"""
-    input_ = message.input_str
     reply_ = message.reply_to_message
-    if input_:
+    if input_ := message.input_str:
         split = input_.split()
     else:
         await message.edit("`ERROR: Provide user and FedID...`", del_in=5)
@@ -77,10 +76,7 @@ async def fban_stat(message: Message):
         user = split[0]
         fed_id = split[1]
     elif len(split) == 1:
-        if reply_:
-            user = reply_.from_user.id
-        else:
-            user = message.from_user.id
+        user = reply_.from_user.id if reply_ else message.from_user.id
         fed_id = split[0]
     try:
         user_ = await paimon.get_users(user)

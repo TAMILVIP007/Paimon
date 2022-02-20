@@ -56,9 +56,9 @@ async def app(message: Message):
             .img["data-src"]
         )
         app_details = "<a href='" + app_icon + "'>📲&#8203;</a>"
-        app_details += " <b>" + app_name + "</b>"
+        app_details += f' <b>{app_name}</b>'
         app_details += "\n\n<code>Developer :</code> <a href='" + app_dev_link + "'>"
-        app_details += app_dev + "</a>"
+        app_details += f'{app_dev}</a>'
         app_details += "\n<code>Rating :</code> " + app_rating.replace(
             "Rated ", "⭐️ "
         ).replace(" out of ", "/").replace(" stars", "", 1).replace(

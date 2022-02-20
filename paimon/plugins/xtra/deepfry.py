@@ -226,16 +226,15 @@ async def fry_(message: Message):
             return
         message_id = replied.message_id
         deep_fry = None
-        if response.photo:
-            directory = Config.DOWN_PATH
-            files_name = "fry.webp"
-            deep_fry = os.path.join(directory, files_name)
-            await paimon.download_media(message=response, file_name=deep_fry)
-            await paimon.send_sticker(
-                message.chat.id,
-                sticker=deep_fry,
-                reply_to_message_id=message_id,
-            )
+        directory = Config.DOWN_PATH
+        files_name = "fry.webp"
+        deep_fry = os.path.join(directory, files_name)
+        await paimon.download_media(message=response, file_name=deep_fry)
+        await paimon.send_sticker(
+            message.chat.id,
+            sticker=deep_fry,
+            reply_to_message_id=message_id,
+        )
     await message.delete()
     for garb in (dls_loc, frying_file, deep_fry):
         if garb and os.path.exists(garb):

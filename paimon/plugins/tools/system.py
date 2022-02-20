@@ -119,9 +119,7 @@ async def setvar_(message: Message) -> None:
     heroku = True
     if not Config.HEROKU_APP:
         heroku = False
-        if os.path.exists("config.env"):
-            pass
-        else:
+        if not os.path.exists("config.env"):
             await message.err("`Heroku app and config.env both not detected...`")
             return
     if not message.input_str:
@@ -178,9 +176,7 @@ async def delvar_(message: Message) -> None:
     heroku = True
     if not Config.HEROKU_APP:
         heroku = False
-        if os.path.exists("config.env"):
-            pass
-        else:
+        if not os.path.exists("config.env"):
             await message.err("`Heroku app and config.env both not detected...`")
             return
     if not message.input_str:
@@ -227,9 +223,7 @@ async def getvar_(message: Message) -> None:
     heroku = True
     if not Config.HEROKU_APP:
         heroku = False
-        if os.path.exists("config.env"):
-            pass
-        else:
+        if not os.path.exists("config.env"):
             await message.err("`Heroku app and config.env both not detected...`")
             return
     if not message.input_str:

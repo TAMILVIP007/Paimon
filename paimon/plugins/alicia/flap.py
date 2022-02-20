@@ -30,11 +30,7 @@ async def flac_bot(message: Message):
         query_id=results.query_id,
         result_id=results.results[0].id,
     )
-    reply_ = message.reply_to_message
-    if reply_:
-        reply_to = reply_.message_id
-    else:
-        reply_to = None
+    reply_to = reply_.message_id if (reply_ := message.reply_to_message) else None
     try:
         await paimon.copy_message(
             chat_id=bot_,

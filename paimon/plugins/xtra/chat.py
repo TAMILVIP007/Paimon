@@ -1,6 +1,7 @@
 """ Chat info, Join and leave chat, tagall and tag admins """
 
 
+
 import asyncio
 import html
 import os
@@ -17,7 +18,7 @@ from paimon import Config, Message, paimon
 
 LOG = paimon.getLogger(__name__)
 
-PATH = Config.DOWN_PATH + "chat_pic.jpg"
+PATH = f'{Config.DOWN_PATH}chat_pic.jpg'
 
 
 def mention_html(user_id, name):
@@ -154,7 +155,7 @@ async def tagall_(message: Message):
                 f_name = (await message.client.get_user_dict(u_id))["fname"]
                 text += f"@{u_name} " if u_name else f"[{f_name}](tg://user?id={u_id}) "
     except Exception as e:
-        text += " " + str(e)
+        text += f' {str(e)}'
     await message.client.send_message(c_id, text, reply_to_message_id=message_id)
     await message.edit("```Tagged recent Members Successfully...```", del_in=3)
 
@@ -221,7 +222,7 @@ async def tadmins_(message: Message):
             elif status in ["administrator", "creator"]:
                 text += f"[{f_name}](tg://user?id={u_id}) "
     except Exception as e:
-        text += " " + str(e)
+        text += f' {str(e)}'
     await message.client.send_message(c_id, text, reply_to_message_id=message_id)
     await message.edit("```Admins tagged Successfully...```", del_in=3)
 
@@ -330,15 +331,14 @@ async def view_chat(message: Message):
             await message.edit(
                 "<code>{}</code>".format(chat.description), parse_mode="html"
             )
+    elif not chat.photo:
+        await message.err("```Chat not have photo... ```", del_in=3)
     else:
-        if not chat.photo:
-            await message.err("```Chat not have photo... ```", del_in=3)
-        else:
-            await message.edit("```Checking chat photo, wait plox !...```", del_in=3)
-            await message.client.download_media(chat.photo.big_file_id, file_name=PATH)
-            await message.client.send_photo(message.chat.id, PATH)
-            if os.path.exists(PATH):
-                os.remove(PATH)
+        await message.edit("```Checking chat photo, wait plox !...```", del_in=3)
+        await message.client.download_media(chat.photo.big_file_id, file_name=PATH)
+        await message.client.send_photo(message.chat.id, PATH)
+        if os.path.exists(PATH):
+            os.remove(PATH)
 
 
 @paimon.on_cmd(
